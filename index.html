@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="app_title">EcoAudit ASIR | Consultoria Energètica</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-wrapper">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">EcoAudit<span class="accent">ASIR</span></div>
+                <button class="menu-toggle-close" onclick="toggleMenu()">×</button>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#" class="nav-link active" onclick="showPage('dashboard', event)">📊 <span class="link-text" data-i18n="nav_dashboard">Dashboard & Gràfics</span></a></li>
+                    <li><a href="#" class="nav-link" onclick="showPage('calculator', event)">🧮 <span class="link-text" data-i18n="nav_calc">Calculadora & Simulació</span></a></li>
+                    <li><a href="#" class="nav-link" onclick="showPage('variability', event)">🌦️ <span class="link-text" data-i18n="nav_var">Cicles Estacionals</span></a></li>
+                    <li><a href="#" class="nav-link" onclick="showPage('data', event)">📂 <span class="link-text" data-i18n="nav_data">Exportar Informe JSON</span></a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-footer">
+                <p data-i18n="footer_text">ITB Sostenibilitat TIC - Grup G11</p>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="menu-toggle-open" onclick="toggleMenu()">☰</button>
+                    <h1 data-i18n="header_title">Anàlisi de Petjada Ambiental (Dades Reals Fase 1)</h1>
+                </div>
+                <div class="header-right">
+                    <div class="controls-group">
+                        <button id="theme-toggle" class="icon-btn tooltip" onclick="toggleTheme()">☀️</button>
+                        <select id="lang-select" class="lang-select" onchange="changeLang(this.value)">
+                            <option value="ca">CA</option>
+                            <option value="es">ES</option>
+                            <option value="en">EN</option>
+                            <option value="de">DE</option> </select>
+                    </div>
+                    <div class="period-selector">
+                        <label for="meses" data-i18n="lbl_period">Període:</label>
+                        <input type="number" id="meses" value="12" min="1" max="12" onchange="calcularTot()">
+                        <span data-i18n="lbl_months">mesos</span>
+                    </div>
+                </div>
+            </header>
+
+            <section id="page-dashboard" class="page-section active-page">
+                <div class="kpi-grid">
+                    <div class="kpi-card"><div class="kpi-header">⚡ <span data-i18n="kpi_elec">Electricitat</span></div><h2 id="kpi-elec">0</h2><p class="sub-kpi"><span data-i18n="lbl_annual">Anual</span>: <span id="kpi-elec-anual">0</span></p></div>
+                    <div class="kpi-card"><div class="kpi-header">🔥 <span data-i18n="kpi_gas">Gas Natural</span></div><h2 id="kpi-gas">0</h2><p class="sub-kpi"><span data-i18n="lbl_annual">Anual</span>: <span id="kpi-gas-anual">0</span></p></div>
+                    <div class="kpi-card"><div class="kpi-header">💧 <span data-i18n="kpi_water">Aigua</span></div><h2 id="kpi-water">0</h2><p class="sub-kpi"><span data-i18n="lbl_annual">Anual</span>: <span id="kpi-water-anual">0</span></p></div>
+                    <div class="kpi-card"><div class="kpi-header">📄 <span data-i18n="kpi_paper">Paper</span></div><h2 id="kpi-paper">0</h2><p class="sub-kpi"><span data-i18n="lbl_annual">Anual</span>: <span id="kpi-paper-anual">0</span></p></div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="content-block chart-container">
+                        <h3 data-i18n="chart_radar">Radar d'Eficiència (% de Reducció sobre Base)</h3>
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                    <div class="content-block chart-container">
+                        <h3 data-i18n="chart_doughnut">Distribució d'Emissions CO2e</h3>
+                        <canvas id="doughnutChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3 data-i18n="table_title">🔍 Desglossament Detallat de l'Impacte (8 Càlculs)</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th data-i18n="th_ind">Indicador</th>
+                                    <th data-i18n="th_calc1">Càlcul 1: Anual (12m)</th>
+                                    <th data-i18n="th_calc2">Càlcul 2: Període Sel.</th>
+                                    <th data-i18n="th_fact">Factor CO2</th>
+                                    <th data-i18n="th_emis">Emissions CO2e</th>
+                                </tr>
+                            </thead>
+                            <tbody id="calculations-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="page-calculator" class="page-section">
+                <div class="calculator-grid">
+                    <div class="content-block">
+                        <h2 data-i18n="calc_title">🧮 Calculadora (Basat en KPIs 2024)</h2>
+                        <p class="desc-text" data-i18n="calc_desc">Valors mensuals mitjans extrets del fitxer 8_KPIs_RESUM.csv.</p>
+                        
+                        <div class="slider-group">
+                            <label>⚡ <span data-i18n="kpi_elec">Electricitat</span> (<span id="val-elec" class="accent font-bold">2912</span> kWh)</label>
+                            <input type="range" id="slide-elec" min="1000" max="6000" step="10" value="2912" oninput="syncInput('elec')">
+                        </div>
+                        <div class="slider-group">
+                            <label>🔥 <span data-i18n="kpi_gas">Gas Natural</span> (<span id="val-gas" class="accent font-bold">1282</span> kWh)</label>
+                            <input type="range" id="slide-gas" min="100" max="4000" step="10" value="1282" oninput="syncInput('gas')">
+                        </div>
+                        <div class="slider-group">
+                            <label>💧 <span data-i18n="kpi_water">Aigua</span> (<span id="val-water" class="accent font-bold">35</span> m³)</label>
+                            <input type="range" id="slide-water" min="5" max="100" step="1" value="35" oninput="syncInput('water')">
+                        </div>
+                        <div class="slider-group">
+                            <label>📄 <span data-i18n="kpi_paper">Paper</span> (<span id="val-paper" class="accent font-bold">20</span> <span data-i18n="unit_packs">paquets</span>)</label>
+                            <input type="range" id="slide-paper" min="1" max="100" step="1" value="20" oninput="syncInput('paper')">
+                        </div>
+                    </div>
+
+                    <div class="content-block">
+                        <h2 data-i18n="strat_title">🌱 Simulació d'Accions (Objectiu 30%)</h2>
+                        <p class="desc-text" data-i18n="strat_desc">Activa estratègies per veure el gràfic radar actuar en temps real.</p>
+                        <div class="strategy-controls vertical">
+                            <button class="btn-strategy" id="strat-ia" onclick="toggleEstrategia('ia', 0.15)">🤖 <span data-i18n="btn_ia">IA (-15% Llum)</span></button>
+                            <button class="btn-strategy" id="strat-clima" onclick="toggleEstrategia('clima', 0.25)">🌡️ <span data-i18n="btn_clima">Aïllament (-25% Gas)</span></button>
+                            <button class="btn-strategy" id="strat-paper" onclick="toggleEstrategia('paper', 0.90)">📵 <span data-i18n="btn_paper">Zero Paper (-90%)</span></button>
+                        </div>
+                        <div class="target-banner mt-3">
+                            <h3><span data-i18n="banner_target">Objectiu Any 3 (-30%):</span> <br><span id="target-30-value" class="highlight-val">0</span> kg CO2e</h3>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="page-variability" class="page-section">
+                <div class="content-block">
+                    <h2 data-i18n="var_title">🌦️ Tendències Temporals i Cicles Estacionals</h2>
+                    <p class="desc-text" data-i18n="var_desc">Distribució calculada basant-se en el fitxer 10_DATACLEANING.csv.</p>
+                    <div class="chart-container mt-3" style="height: 350px;">
+                        <canvas id="seasonalChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section id="page-data" class="page-section">
+                <div class="content-block">
+                    <div class="header-with-button">
+                        <h2 data-i18n="data_title">📂 Exportació JSON (DataClean + Projeccions)</h2>
+                        <button class="btn-download" onclick="descargarJSON()">⬇️ <span data-i18n="btn_down">Descarregar Informe</span></button>
+                    </div>
+                    <p class="desc-text" data-i18n="data_desc">Conté les dades originals del DataClean de la Fase 1 i les projeccions de la Fase 3.</p>
+                    <pre id="json-display" class="json-box"></pre>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
