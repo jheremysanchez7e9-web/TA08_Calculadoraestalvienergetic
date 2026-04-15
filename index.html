@@ -1,156 +1,355 @@
 <!DOCTYPE html>
 <html lang="ca">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="app_title">EcoAudit ASIR | Consultoria Energètica</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="app_title">EcoAudit ASIR | ITB G11</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="app-wrapper">
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="logo">EcoAudit<span class="accent">ASIR</span></div>
-                <button class="menu-toggle-close" onclick="toggleMenu()">×</button>
-            </div>
-            <nav class="sidebar-nav">
-                <ul>
-                    <li><a href="#" class="nav-link active" onclick="showPage('dashboard', event)">📊 <span class="link-text" data-i18n="nav_dashboard">Dashboard & Gràfics</span></a></li>
-                    <li><a href="#" class="nav-link" onclick="showPage('calculator', event)">🧮 <span class="link-text" data-i18n="nav_calc">Calculadora & Simulació</span></a></li>
-                    <li><a href="#" class="nav-link" onclick="showPage('variability', event)">🌦️ <span class="link-text" data-i18n="nav_var">Cicles Estacionals</span></a></li>
-                    <li><a href="#" class="nav-link" onclick="showPage('data', event)">📂 <span class="link-text" data-i18n="nav_data">Exportar Informe JSON</span></a></li>
-                </ul>
-            </nav>
-            <div class="sidebar-footer">
-                <p data-i18n="footer_text">ITB Sostenibilitat TIC - Grup G11</p>
-            </div>
-        </aside>
+<div class="app">
 
-        <main class="main-content">
-            <header class="main-header">
-                <div class="header-left">
-                    <button class="menu-toggle-open" onclick="toggleMenu()">☰</button>
-                    <h1 data-i18n="header_title">Anàlisi de Petjada Ambiental (Dades Reals Fase 1)</h1>
-                </div>
-                <div class="header-right">
-                    <div class="controls-group">
-                        <button id="theme-toggle" class="icon-btn tooltip" onclick="toggleTheme()">☀️</button>
-                        <select id="lang-select" class="lang-select" onchange="changeLang(this.value)">
-                            <option value="ca">CA</option>
-                            <option value="es">ES</option>
-                            <option value="en">EN</option>
-                            <option value="de">DE</option> </select>
-                    </div>
-                    <div class="period-selector">
-                        <label for="meses" data-i18n="lbl_period">Període:</label>
-                        <input type="number" id="meses" value="12" min="1" max="12" onchange="calcularTot()">
-                        <span data-i18n="lbl_months">mesos</span>
-                    </div>
-                </div>
-            </header>
-
-            <section id="page-dashboard" class="page-section active-page">
-                <div class="kpi-grid">
-                    <div class="kpi-card"><div class="kpi-header">⚡ <span data-i18n="kpi_elec">Electricitat</span></div><h2 id="kpi-elec">0</h2><p class="sub-kpi"><span data-i18n="lbl_annual">Anual</span>: <span id="kpi-elec-anual">0</span></p></div>
-                    <div class="kpi-card"><div class="kpi-header">🔥 <span data-i18n="kpi_gas">Gas Natural</span></div><h2 id="kpi-gas">0</h2><p class="sub-kpi"><span data-i18n="lbl_annual">Anual</span>: <span id="kpi-gas-anual">0</span></p></div>
-                    <div class="kpi-card"><div class="kpi-header">💧 <span data-i18n="kpi_water">Aigua</span></div><h2 id="kpi-water">0</h2><p class="sub-kpi"><span data-i18n="lbl_annual">Anual</span>: <span id="kpi-water-anual">0</span></p></div>
-                    <div class="kpi-card"><div class="kpi-header">📄 <span data-i18n="kpi_paper">Paper</span></div><h2 id="kpi-paper">0</h2><p class="sub-kpi"><span data-i18n="lbl_annual">Anual</span>: <span id="kpi-paper-anual">0</span></p></div>
-                </div>
-
-                <div class="charts-grid">
-                    <div class="content-block chart-container">
-                        <h3 data-i18n="chart_radar">Radar d'Eficiència (% de Reducció sobre Base)</h3>
-                        <canvas id="radarChart"></canvas>
-                    </div>
-                    <div class="content-block chart-container">
-                        <h3 data-i18n="chart_doughnut">Distribució d'Emissions CO2e</h3>
-                        <canvas id="doughnutChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="content-block">
-                    <h3 data-i18n="table_title">🔍 Desglossament Detallat de l'Impacte (8 Càlculs)</h3>
-                    <div class="table-responsive">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th data-i18n="th_ind">Indicador</th>
-                                    <th data-i18n="th_calc1">Càlcul 1: Anual (12m)</th>
-                                    <th data-i18n="th_calc2">Càlcul 2: Període Sel.</th>
-                                    <th data-i18n="th_fact">Factor CO2</th>
-                                    <th data-i18n="th_emis">Emissions CO2e</th>
-                                </tr>
-                            </thead>
-                            <tbody id="calculations-body"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </section>
-
-            <section id="page-calculator" class="page-section">
-                <div class="calculator-grid">
-                    <div class="content-block">
-                        <h2 data-i18n="calc_title">🧮 Calculadora (Basat en KPIs 2024)</h2>
-                        <p class="desc-text" data-i18n="calc_desc">Valors mensuals mitjans extrets del fitxer 8_KPIs_RESUM.csv.</p>
-                        
-                        <div class="slider-group">
-                            <label>⚡ <span data-i18n="kpi_elec">Electricitat</span> (<span id="val-elec" class="accent font-bold">2912</span> kWh)</label>
-                            <input type="range" id="slide-elec" min="1000" max="6000" step="10" value="2912" oninput="syncInput('elec')">
-                        </div>
-                        <div class="slider-group">
-                            <label>🔥 <span data-i18n="kpi_gas">Gas Natural</span> (<span id="val-gas" class="accent font-bold">1282</span> kWh)</label>
-                            <input type="range" id="slide-gas" min="100" max="4000" step="10" value="1282" oninput="syncInput('gas')">
-                        </div>
-                        <div class="slider-group">
-                            <label>💧 <span data-i18n="kpi_water">Aigua</span> (<span id="val-water" class="accent font-bold">35</span> m³)</label>
-                            <input type="range" id="slide-water" min="5" max="100" step="1" value="35" oninput="syncInput('water')">
-                        </div>
-                        <div class="slider-group">
-                            <label>📄 <span data-i18n="kpi_paper">Paper</span> (<span id="val-paper" class="accent font-bold">20</span> <span data-i18n="unit_packs">paquets</span>)</label>
-                            <input type="range" id="slide-paper" min="1" max="100" step="1" value="20" oninput="syncInput('paper')">
-                        </div>
-                    </div>
-
-                    <div class="content-block">
-                        <h2 data-i18n="strat_title">🌱 Simulació d'Accions (Objectiu 30%)</h2>
-                        <p class="desc-text" data-i18n="strat_desc">Activa estratègies per veure el gràfic radar actuar en temps real.</p>
-                        <div class="strategy-controls vertical">
-                            <button class="btn-strategy" id="strat-ia" onclick="toggleEstrategia('ia', 0.15)">🤖 <span data-i18n="btn_ia">IA (-15% Llum)</span></button>
-                            <button class="btn-strategy" id="strat-clima" onclick="toggleEstrategia('clima', 0.25)">🌡️ <span data-i18n="btn_clima">Aïllament (-25% Gas)</span></button>
-                            <button class="btn-strategy" id="strat-paper" onclick="toggleEstrategia('paper', 0.90)">📵 <span data-i18n="btn_paper">Zero Paper (-90%)</span></button>
-                        </div>
-                        <div class="target-banner mt-3">
-                            <h3><span data-i18n="banner_target">Objectiu Any 3 (-30%):</span> <br><span id="target-30-value" class="highlight-val">0</span> kg CO2e</h3>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="page-variability" class="page-section">
-                <div class="content-block">
-                    <h2 data-i18n="var_title">🌦️ Tendències Temporals i Cicles Estacionals</h2>
-                    <p class="desc-text" data-i18n="var_desc">Distribució calculada basant-se en el fitxer 10_DATACLEANING.csv.</p>
-                    <div class="chart-container mt-3" style="height: 350px;">
-                        <canvas id="seasonalChart"></canvas>
-                    </div>
-                </div>
-            </section>
-
-            <section id="page-data" class="page-section">
-                <div class="content-block">
-                    <div class="header-with-button">
-                        <h2 data-i18n="data_title">📂 Exportació JSON (DataClean + Projeccions)</h2>
-                        <button class="btn-download" onclick="descargarJSON()">⬇️ <span data-i18n="btn_down">Descarregar Informe</span></button>
-                    </div>
-                    <p class="desc-text" data-i18n="data_desc">Conté les dades originals del DataClean de la Fase 1 i les projeccions de la Fase 3.</p>
-                    <pre id="json-display" class="json-box"></pre>
-                </div>
-            </section>
-        </main>
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-top">
+      <div class="logo">
+        <div class="logo-mark">🌿</div>
+        <div class="logo-text">Eco<span>Audit</span></div>
+      </div>
+      <button class="close-btn" onclick="closeSB()">✕</button>
     </div>
+    <nav class="sb-nav">
+      <p class="nav-label">Anàlisi</p>
+      <ul>
+        <li><a class="nav-item active" href="#" onclick="go('dash',event)"><span class="ni">📊</span><span data-i18n="nav_dashboard">Dashboard</span></a></li>
+        <li><a class="nav-item" href="#" onclick="go('calc',event)"><span class="ni">🧮</span><span data-i18n="nav_calc">Calculadora & 8 Càlculs</span></a></li>
+        <li><a class="nav-item" href="#" onclick="go('seasonal',event)"><span class="ni">🌦️</span><span data-i18n="nav_var">Cicles Estacionals</span></a></li>
+        <li><a class="nav-item" href="#" onclick="go('plan',event)"><span class="ni">🎯</span><span data-i18n="nav_plan">Pla Reducció 3 Anys</span></a></li>
+        <li><a class="nav-item" href="#" onclick="go('data',event)"><span class="ni">📂</span><span data-i18n="nav_data">Exportar JSON</span></a></li>
+      </ul>
+      <p class="nav-label mt">Estat</p>
+      <div class="status-chip"><span class="dot"></span> ITB · G11 · Actiu</div>
+    </nav>
+    <div class="sb-foot">
+      <span data-i18n="footer_text">ITB Sostenibilitat TIC - G11</span><br>Projecte TA08 · 2024
+    </div>
+  </aside>
 
-    <script src="script.js"></script>
+  <!-- MAIN -->
+  <div class="main">
+    <header class="topbar">
+      <div class="tb-left">
+        <button class="hamburger" onclick="openSB()">☰</button>
+        <div>
+          <div class="tb-title" data-i18n="header_title">Petjada Ambiental ITB</div>
+          <div class="tb-sub">Dades Reals · Fase 1 &amp; 3 · G11 ASIX</div>
+        </div>
+      </div>
+      <div class="tb-right">
+        <div class="ctrl-pill">
+          <button class="ctrl-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+          <div class="pill-sep"></div>
+          <select id="lang-sel" onchange="changeLang(this.value)">
+            <option value="ca">CA</option>
+            <option value="es">ES</option>
+            <option value="en">EN</option>
+            <option value="de">DE</option>
+          </select>
+        </div>
+        <div class="period-ctrl">
+          <label for="mesos" data-i18n="lbl_period">Període</label>
+          <input type="number" id="mesos" value="12" min="1" max="12" onchange="recalc()">
+          <span data-i18n="lbl_months">mesos</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="overlay" id="overlay" onclick="closeSB()"></div>
+
+    <div class="pages">
+
+      <!-- PAGE: DASHBOARD -->
+      <div class="page active" id="page-dash">
+        <div class="hero">
+          <div>
+            <div class="hero-title">Anàlisi de Petjada Ambiental</div>
+            <div class="hero-sub">Institut Tecnologia de Barcelona · G11 ASIX · Curs 2024</div>
+          </div>
+          <div class="hero-chips">
+            <span class="chip mint">🌱 Projecte Actiu</span>
+            <span class="chip blue">📋 Fase 1 &amp; 3</span>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi kpi-elec"><div class="kpi-glow"></div>
+            <div class="kpi-head"><div class="kpi-ico">⚡</div><span class="kpi-lbl" data-i18n="kpi_elec">Electricitat</span></div>
+            <div class="kpi-num"><span id="kpi-elec">0</span><span class="kpi-un">kWh</span></div>
+            <div class="kpi-ft"><span data-i18n="lbl_annual">Anual</span>: <span id="kpi-elec-a">0</span></div>
+          </div>
+          <div class="kpi kpi-gas"><div class="kpi-glow"></div>
+            <div class="kpi-head"><div class="kpi-ico">🔥</div><span class="kpi-lbl" data-i18n="kpi_gas">Gas Natural</span></div>
+            <div class="kpi-num"><span id="kpi-gas">0</span><span class="kpi-un">kWh</span></div>
+            <div class="kpi-ft"><span data-i18n="lbl_annual">Anual</span>: <span id="kpi-gas-a">0</span></div>
+          </div>
+          <div class="kpi kpi-water"><div class="kpi-glow"></div>
+            <div class="kpi-head"><div class="kpi-ico">💧</div><span class="kpi-lbl" data-i18n="kpi_water">Aigua</span></div>
+            <div class="kpi-num"><span id="kpi-water">0</span><span class="kpi-un">m³</span></div>
+            <div class="kpi-ft"><span data-i18n="lbl_annual">Anual</span>: <span id="kpi-water-a">0</span></div>
+          </div>
+          <div class="kpi kpi-paper"><div class="kpi-glow"></div>
+            <div class="kpi-head"><div class="kpi-ico">📄</div><span class="kpi-lbl" data-i18n="kpi_paper">Paper Oficina</span></div>
+            <div class="kpi-num"><span id="kpi-paper">0</span><span class="kpi-un">packs</span></div>
+            <div class="kpi-ft"><span data-i18n="lbl_annual">Anual</span>: <span id="kpi-paper-a">0</span></div>
+          </div>
+          <div class="kpi kpi-clean"><div class="kpi-glow"></div>
+            <div class="kpi-head"><div class="kpi-ico">🧴</div><span class="kpi-lbl" data-i18n="kpi_clean">Prod. Neteja</span></div>
+            <div class="kpi-num"><span id="kpi-clean">0</span><span class="kpi-un">L</span></div>
+            <div class="kpi-ft"><span data-i18n="lbl_annual">Anual</span>: <span id="kpi-clean-a">0</span></div>
+          </div>
+        </div>
+
+        <div class="two-col mb">
+          <div class="card">
+            <div class="card-head"><span class="card-title" data-i18n="chart_radar">Radar d'Eficiència</span><span class="badge">% vs Base</span></div>
+            <div class="chart-box"><canvas id="radarChart"></canvas></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span class="card-title" data-i18n="chart_doughnut">Distribució CO2e</span><span class="badge">Emissions</span></div>
+            <div class="chart-box"><canvas id="doughnutChart"></canvas></div>
+          </div>
+        </div>
+
+        <div class="card mb">
+          <div class="card-head">
+            <span class="card-title" data-i18n="table_title">Taula dels 8 Càlculs Requerits (RA 3.1a)</span>
+            <span class="badge green">8 càlculs</span>
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th data-i18n="th_ind">Indicador</th>
+                  <th data-i18n="th_calc1">Consum Anual (12m)</th>
+                  <th>Consum Set–Jun (10m)</th>
+                  <th data-i18n="th_fact">Factor CO2e</th>
+                  <th data-i18n="th_emis">Emissions Anuals CO2e</th>
+                </tr>
+              </thead>
+              <tbody id="tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE: CALCULATOR -->
+      <div class="page" id="page-calc">
+        <div class="sec-header">
+          <h2>🧮 <span data-i18n="calc_title">Calculadora & Simulació</span></h2>
+          <p data-i18n="calc_desc">Ajusta els valors mensuals i activa estratègies per veure l'impacte en temps real sobre tots els indicadors.</p>
+        </div>
+        <div class="two-col-asym mb">
+          <div class="card">
+            <div class="card-head"><span class="card-title">Valors Mensuals Base (2024)</span><span class="badge">KPIs Reals</span></div>
+            <p class="card-sub">Fonts: 8_KPIs_RESUM.csv · 10_DATACLEANING.csv</p>
+
+            <div class="sl-row">
+              <div class="sl-head"><label><span class="sl-ico">⚡</span> <span data-i18n="kpi_elec">Electricitat</span></label><span class="sl-badge"><span class="n" id="val-elec">2912</span> kWh</span></div>
+              <input type="range" id="slide-elec" min="1000" max="6000" step="10" value="2912" oninput="sync('elec')">
+            </div>
+            <div class="sl-row">
+              <div class="sl-head"><label><span class="sl-ico">🔥</span> <span data-i18n="kpi_gas">Gas Natural</span></label><span class="sl-badge"><span class="n" id="val-gas">1282</span> kWh</span></div>
+              <input type="range" id="slide-gas" min="100" max="4000" step="10" value="1282" oninput="sync('gas')">
+            </div>
+            <div class="sl-row">
+              <div class="sl-head"><label><span class="sl-ico">💧</span> <span data-i18n="kpi_water">Aigua</span></label><span class="sl-badge"><span class="n" id="val-water">35</span> m³</span></div>
+              <input type="range" id="slide-water" min="5" max="100" step="1" value="35" oninput="sync('water')">
+            </div>
+            <div class="sl-row">
+              <div class="sl-head"><label><span class="sl-ico">📄</span> <span data-i18n="kpi_paper">Paper Oficina</span></label><span class="sl-badge"><span class="n" id="val-paper">20</span> <span data-i18n="unit_packs">paquets</span></span></div>
+              <input type="range" id="slide-paper" min="1" max="100" step="1" value="20" oninput="sync('paper')">
+            </div>
+            <div class="sl-row">
+              <div class="sl-head"><label><span class="sl-ico">🧴</span> <span data-i18n="kpi_clean">Prod. Neteja</span></label><span class="sl-badge"><span class="n" id="val-clean">15</span> L</span></div>
+              <input type="range" id="slide-clean" min="1" max="60" step="1" value="15" oninput="sync('clean')">
+            </div>
+
+            <div class="reduce-box">
+              <div class="rb-title">💡 Com reduir cada indicador</div>
+              <div class="rb-items">
+                <div class="rb-item"><span>⚡</span><div><b>Electricitat:</b> Sensors presència, LED, desconnexió equips fora d'horari.</div></div>
+                <div class="rb-item"><span>🔥</span><div><b>Gas:</b> Aïllament tèrmic, regulació caldera, termòstats intel·ligents.</div></div>
+                <div class="rb-item"><span>💧</span><div><b>Aigua:</b> Airejadors, cisternes doble descàrrega, recollida pluvial.</div></div>
+                <div class="rb-item"><span>📄</span><div><b>Paper:</b> Digitalització, impressió doble cara, comunicació electrònica.</div></div>
+                <div class="rb-item"><span>🧴</span><div><b>Neteja:</b> Productes concentrats, envasos reutilitzables, protocols ús eficient.</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><span class="card-title" data-i18n="strat_title">Simulació Estratègies</span></div>
+            <p class="card-sub" data-i18n="strat_desc">Activa per veure l'impacte en el radar en temps real.</p>
+            <div class="strat-list">
+              <button class="strat" id="strat-ia"    onclick="toggleStrat('ia',0.15)">    <span class="st-e">🤖</span><div class="st-b"><span class="st-n" data-i18n="btn_ia">IA (−15% Llum)</span><span class="st-d">Sensors i IA gestió energètica</span></div><div class="sw"></div></button>
+              <button class="strat" id="strat-clima" onclick="toggleStrat('clima',0.25)"> <span class="st-e">🌡️</span><div class="st-b"><span class="st-n" data-i18n="btn_clima">Aïllament (−25% Gas)</span><span class="st-d">Millora envolupant tèrmica</span></div><div class="sw"></div></button>
+              <button class="strat" id="strat-paper" onclick="toggleStrat('paper',0.90)"> <span class="st-e">📵</span><div class="st-b"><span class="st-n" data-i18n="btn_paper">Zero Paper (−90%)</span><span class="st-d">Digitalització total processos</span></div><div class="sw"></div></button>
+              <button class="strat" id="strat-water" onclick="toggleStrat('water',0.20)"> <span class="st-e">🚿</span><div class="st-b"><span class="st-n">Estalvi Aigua (−20%)</span><span class="st-d">Airejadors i cisternes eficients</span></div><div class="sw"></div></button>
+              <button class="strat" id="strat-clean" onclick="toggleStrat('clean',0.40)"> <span class="st-e">♻️</span><div class="st-b"><span class="st-n">Neteja Eco (−40%)</span><span class="st-d">Productes concentrats reutilitzables</span></div><div class="sw"></div></button>
+            </div>
+            <div class="target-card">
+              <div class="tc-lbl" data-i18n="banner_target">Objectiu Any 3 (−30%)</div>
+              <div class="tc-val"><span id="target-val">0</span><span class="tc-un">kg CO2e</span></div>
+              <div class="tc-sub">Reducció si s'activen totes les estratègies</div>
+              <div class="prog-track"><div class="prog-bar" id="prog-bar"></div></div>
+              <div class="prog-lbls"><span>0%</span><span id="prog-pct">0%</span><span>100%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE: SEASONAL -->
+      <div class="page" id="page-seasonal">
+        <div class="sec-header">
+          <h2>🌦️ <span data-i18n="var_title">Cicles Estacionals i Tendències</span></h2>
+          <p data-i18n="var_desc">Variabilitat mensual calculada a partir de 10_DATACLEANING.csv. Agost: centre tancat (5% del valor base).</p>
+        </div>
+        <div class="card mb">
+          <div class="card-head"><span class="card-title">Gas &amp; Electricitat — Tendència Anual</span><span class="badge">Temporal</span></div>
+          <div class="chart-box tall"><canvas id="seasonalChart"></canvas></div>
+        </div>
+        <div class="card mb">
+          <div class="card-head"><span class="card-title">Aigua &amp; Productes Neteja — Tendència Anual</span><span class="badge">Temporal</span></div>
+          <div class="chart-box tall"><canvas id="seasonalChart2"></canvas></div>
+        </div>
+        <div class="four-col mb">
+          <div class="card">
+            <div class="card-head"><span class="card-title">🌡️ Hivern (Oct–Feb)</span></div>
+            <ul class="sf-list">
+              <li>⚡ Electricitat <strong>+15%</strong></li>
+              <li>🔥 Gas <strong>+120%</strong></li>
+              <li>💧 Aigua: base</li>
+              <li>🧴 Neteja <strong>+10%</strong></li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-head"><span class="card-title">☀️ Estiu (Jun–Ago)</span></div>
+            <ul class="sf-list">
+              <li>⚡ Electricitat: base</li>
+              <li>🔥 Gas <strong>−90%</strong></li>
+              <li>💧 Aigua <strong>+30%</strong></li>
+              <li>🧴 Neteja <strong>−50%</strong></li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-head"><span class="card-title">🎒 Inici Curs (Set)</span></div>
+            <ul class="sf-list">
+              <li>📄 Paper <strong>+50%</strong></li>
+              <li>🧴 Neteja <strong>+40%</strong></li>
+              <li>⚡ Electricitat <strong>+5%</strong></li>
+              <li>💧 Aigua <strong>+10%</strong></li>
+            </ul>
+          </div>
+          <div class="card">
+            <div class="card-head"><span class="card-title">🌸 Primavera (Mar–Mai)</span></div>
+            <ul class="sf-list">
+              <li>💧 Aigua <strong>+30%</strong></li>
+              <li>📄 Paper <strong>+25%</strong></li>
+              <li>🔥 Gas <strong>−60%</strong></li>
+              <li>🧴 Neteja <strong>+15%</strong></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE: PLA REDUCCIÓ -->
+      <div class="page" id="page-plan">
+        <div class="sec-header">
+          <h2>🎯 Pla de Reducció del 30% en 3 Anys</h2>
+          <p>Accions concretes, objectius mesurables, indicadors de seguiment i principis d'economia circular. Objectiu: <strong>−30% d'emissions CO2e el 2027.</strong></p>
+        </div>
+
+        <div class="plan-grid mb">
+          <div class="ps-card ps-now"><div class="ps-lbl">Emissions Actuals (2024)</div><div class="ps-val"><span id="plan-now">0</span> kg</div><div class="ps-sub">CO2e anual base</div></div>
+          <div class="ps-card ps-target"><div class="ps-lbl">Objectiu 2027 (−30%)</div><div class="ps-val"><span id="plan-target">0</span> kg</div><div class="ps-sub">CO2e a assolir</div></div>
+          <div class="ps-card ps-saving"><div class="ps-lbl">Estalvi Previst</div><div class="ps-val"><span id="plan-saving">0</span> kg</div><div class="ps-sub">CO2e evitades/any</div></div>
+          <div class="ps-card ps-strat"><div class="ps-lbl">Amb Estratègies Actives</div><div class="ps-val"><span id="plan-strat">0</span> kg</div><div class="ps-sub">Calculadora actualitzada</div></div>
+        </div>
+
+        <div class="card mb">
+          <div class="card-head"><span class="card-title">📅 Cronograma d'Accions a 3 Anys</span><span class="badge green">3.1b</span></div>
+          <div class="timeline">
+
+            <div class="tl-col">
+              <div class="tl-hdr y1"><div class="tl-yr">Any 1 · 2025</div><div class="tl-goal">−10% CO2e</div></div>
+              <div class="tl-item"><span class="tl-i">⚡</span><div class="tl-d"><b>LED + sensors presència</b><p>Substitució il·luminació fluorescent. Sensors en passadissos i lavabos.</p><div class="tl-tags"><span class="tlt">−15% Elec.</span><span class="tlt ec">♻️ Circular</span></div></div></div>
+              <div class="tl-item"><span class="tl-i">📄</span><div class="tl-d"><b>Política impressió responsable</b><p>Impressió doble cara obligatòria. Migració a Google Workspace.</p><div class="tl-tags"><span class="tlt">−30% Paper</span><span class="tlt ec">♻️ Digital</span></div></div></div>
+              <div class="tl-item"><span class="tl-i">🧴</span><div class="tl-d"><b>Productes neteja concentrats</b><p>Envasos reutilitzables. Protocol d'ús eficient per equip neteja.</p><div class="tl-tags"><span class="tlt">−25% Neteja</span><span class="tlt ec">♻️ Envasos</span></div></div></div>
+            </div>
+
+            <div class="tl-col">
+              <div class="tl-hdr y2"><div class="tl-yr">Any 2 · 2026</div><div class="tl-goal">−20% acumulat</div></div>
+              <div class="tl-item"><span class="tl-i">🌡️</span><div class="tl-d"><b>Aïllament tèrmic millorat</b><p>Sellat finestres i portes. Termòstats programables. Auditoria energètica.</p><div class="tl-tags"><span class="tlt">−25% Gas</span><span class="tlt ec">♻️ Passiu</span></div></div></div>
+              <div class="tl-item"><span class="tl-i">💧</span><div class="tl-d"><b>Sistemes estalvi d'aigua</b><p>Airejadors en totes les aixetes. Cisternes doble descàrrega. Revisió fugues.</p><div class="tl-tags"><span class="tlt">−20% Aigua</span><span class="tlt ec">♻️ Reutilitz.</span></div></div></div>
+              <div class="tl-item"><span class="tl-i">📵</span><div class="tl-d"><b>Digitalització total administrativa</b><p>Eliminació formularis paper. Signatures electròniques. Arxiu digital.</p><div class="tl-tags"><span class="tlt">−60% Paper</span><span class="tlt ec">♻️ Zero Paper</span></div></div></div>
+            </div>
+
+            <div class="tl-col">
+              <div class="tl-hdr y3"><div class="tl-yr">Any 3 · 2027</div><div class="tl-goal">−30% ✓ Objectiu</div></div>
+              <div class="tl-item"><span class="tl-i">☀️</span><div class="tl-d"><b>Panells solars fotovoltaics</b><p>Cobriment del 30–40% consum elèctric. Energia verda per la resta.</p><div class="tl-tags"><span class="tlt">−30% Elec.</span><span class="tlt ec">♻️ Renovable</span></div></div></div>
+              <div class="tl-item"><span class="tl-i">🤖</span><div class="tl-d"><b>Sistema BEMS intel·ligent</b><p>Monitoratge temps real. IA per optimitzar calefacció i climatització.</p><div class="tl-tags"><span class="tlt">−10% extra</span><span class="tlt ec">♻️ Smart</span></div></div></div>
+              <div class="tl-item"><span class="tl-i">🌿</span><div class="tl-d"><b>Certificació ESG i compra verda</b><p>Criteris sostenibilitat a tots els contractes. Proveïdors locals km0.</p><div class="tl-tags"><span class="tlt">Impacte global</span><span class="tlt ec">♻️ Responsable</span></div></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mb">
+          <div class="card-head"><span class="card-title">📏 Indicadors de Seguiment (KPIs Reducció)</span></div>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Indicador</th><th>Base 2024</th><th>Any 1 (−10%)</th><th>Any 2 (−20%)</th><th>Any 3 (−30%)</th><th>Reducció Total</th></tr></thead>
+              <tbody>
+                <tr><td>⚡ Electricitat (kWh/any)</td><td id="pi-elec">—</td><td class="amber">−15%</td><td class="amber">−22%</td><td class="hi">−30%</td><td class="hi"><b>−30%</b></td></tr>
+                <tr><td>🔥 Gas (kWh/any)</td><td id="pi-gas">—</td><td class="amber">−5%</td><td class="amber">−18%</td><td class="hi">−25%</td><td class="hi"><b>−25%</b></td></tr>
+                <tr><td>💧 Aigua (m³/any)</td><td id="pi-water">—</td><td class="amber">−5%</td><td class="amber">−15%</td><td class="hi">−20%</td><td class="hi"><b>−20%</b></td></tr>
+                <tr><td>📄 Paper (packs/any)</td><td id="pi-paper">—</td><td class="amber">−30%</td><td class="amber">−60%</td><td class="hi">−90%</td><td class="hi"><b>−90%</b></td></tr>
+                <tr><td>🧴 Prod. Neteja (L/any)</td><td id="pi-clean">—</td><td class="amber">−25%</td><td class="amber">−35%</td><td class="hi">−40%</td><td class="hi"><b>−40%</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card mb">
+          <div class="card-head"><span class="card-title">♻️ Principis d'Economia Circular Aplicats</span></div>
+          <div class="ec-grid">
+            <div class="ec-item"><div class="ec-ico">🔄</div><strong>Reduir</strong><p>Minimitzar consum en origen: menys impressions, menys productes neteja, menys consum energètic innecessari.</p></div>
+            <div class="ec-item"><div class="ec-ico">♻️</div><strong>Reutilitzar</strong><p>Envasos reutilitzables per neteja. Equips informàtics recondicionats. Paper reciclatge per notes internes.</p></div>
+            <div class="ec-item"><div class="ec-ico">🌱</div><strong>Reciclar</strong><p>Contenidors per a cada fracció. Gestió RAEE certificada. Bateries i tòners retornats al fabricant.</p></div>
+            <div class="ec-item"><div class="ec-ico">☀️</div><strong>Renovar</strong><p>Substitució d'energia fòssil per renovable. Panells solars. Contracte energia verda certificada.</p></div>
+            <div class="ec-item"><div class="ec-ico">🤝</div><strong>Responsabilitat</strong><p>Clàusules ESG en contractes proveïdors. Criteris sostenibilitat en compres públiques del centre.</p></div>
+            <div class="ec-item"><div class="ec-ico">📊</div><strong>Mesurar</strong><p>Auditories anuals. Indicadors en temps real amb aquesta eina. Memòria sostenibilitat publicada.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE: DATA -->
+      <div class="page" id="page-data">
+        <div class="sec-header">
+          <h2>📂 <span data-i18n="data_title">Exportació JSON</span></h2>
+          <p data-i18n="data_desc">Conté les dades del DataClean (Fase 1) i les projeccions amb estratègies actives (Fase 3).</p>
+        </div>
+        <div class="card">
+          <div class="card-head"><span class="card-title">Informe Complet G11</span><button class="dl-btn" onclick="downloadJSON()">⬇ <span data-i18n="btn_down">Descarregar JSON</span></button></div>
+          <pre class="json-box" id="json-pre"></pre>
+        </div>
+      </div>
+
+    </div><!-- /pages -->
+  </div><!-- /main -->
+</div><!-- /app -->
+<script src="script.js"></script>
 </body>
 </html>
