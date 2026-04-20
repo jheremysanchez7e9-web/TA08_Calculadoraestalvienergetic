@@ -697,27 +697,50 @@ function seasonal(base) {
   const d = {};
   const keys = Object.keys(base);
 
+  // School calendar: Aug=closed, Dec=Christmas holidays (0), Apr=Easter holidays (0)
+  // Jan back to school (high usage), Mar pre-Easter prep (slightly elevated)
+
   for (const k of keys) {
     const v = safeNum(base[k].val, 0);
     d[k] = MONTH_LABELS_CA.map((_, i) => {
-      if (i === 7) return +(v * 0.05).toFixed(2); // August closed
+      // Closed months: August (7), December Christmas (11), April Easter (3)
+      if (i === 7  ) return +(v * 0.05).toFixed(2); // August: centre closed (minimal standby)
+      if (i === 11 ) return +(v * 0.05).toFixed(2); // December: Christmas holidays closed
+      if (i === 3  ) return +(v * 0.05).toFixed(2); // April: Easter holidays closed
+
       let f = 1.0;
-      if (k === 'gas'   && [10,11,0,1].includes(i)) f = 2.20;
-      if (k === 'gas'   && [2].includes(i))          f = 1.60;
-      if (k === 'gas'   && [3,4].includes(i))        f = 0.50;
-      if (k === 'gas'   && [5,6].includes(i))        f = 0.10;
-      if (k === 'gas'   && [8,9].includes(i))        f = 0.80;
-      if (k === 'elec'  && [11,0,1].includes(i))     f = 1.15;
-      if (k === 'elec'  && [5,6].includes(i))        f = 0.90;
-      if (k === 'water' && [4,5,6].includes(i))      f = 1.30;
-      if (k === 'water' && [8].includes(i))          f = 1.10;
-      if (k === 'water' && [11,0,1].includes(i))     f = 0.85;
-      if (k === 'paper' && i === 8)                  f = 1.50;
-      if (k === 'paper' && [3,4].includes(i))        f = 1.25;
-      if (k === 'paper' && [5,6].includes(i))        f = 0.50;
-      if (k === 'clean' && i === 8)                  f = 1.40;
-      if (k === 'clean' && [10,11,0,1].includes(i)) f = 1.10;
-      if (k === 'clean' && [5,6].includes(i))        f = 0.55;
+
+      // === GAS ===
+      if (k === 'gas' && [10,0,1].includes(i)) f = 2.20;  // Oct, Jan, Feb: winter heating peak
+      if (k === 'gas' && i === 2)               f = 1.60;  // March: still cold
+      if (k === 'gas' && [4].includes(i))       f = 0.50;  // May: warming up
+      if (k === 'gas' && [5,6].includes(i))     f = 0.10;  // Jun, Jul: no heating
+      if (k === 'gas' && [8,9].includes(i))     f = 0.80;  // Sep, Oct start
+
+      // === ELECTRICITY ===
+      if (k === 'elec' && [0,1].includes(i))    f = 1.15;  // Jan, Feb: winter lighting
+      if (k === 'elec' && [5,6].includes(i))    f = 0.90;  // Jun, Jul: less activity
+      if (k === 'elec' && i === 2)              f = 1.18;  // March: pre-Easter activity
+
+      // === WATER ===
+      if (k === 'water' && [4,5,6].includes(i)) f = 1.30;  // May–Jul: warm months
+      if (k === 'water' && [8].includes(i))     f = 1.10;  // Sep: back to school cleaning
+      if (k === 'water' && [0,1].includes(i))   f = 0.85;  // Jan, Feb: winter low
+      if (k === 'water' && i === 2)             f = 1.20;  // March: spring cleaning
+
+      // === PAPER ===
+      if (k === 'paper' && i === 8)             f = 1.50;  // Sep: back to school
+      if (k === 'paper' && [4].includes(i))     f = 1.25;  // May: post-Easter exams
+      if (k === 'paper' && [5,6].includes(i))   f = 0.50;  // Jun, Jul: wind-down
+      if (k === 'paper' && i === 2)             f = 1.45;  // March: pre-Easter exams/projects
+      if (k === 'paper' && i === 0)             f = 1.30;  // January: new-year admin burst
+
+      // === CLEANING PRODUCTS ===
+      if (k === 'clean' && i === 8)             f = 1.40;  // Sep: big clean after summer
+      if (k === 'clean' && [10,0,1].includes(i)) f = 1.10; // Oct, Jan, Feb: winter extra
+      if (k === 'clean' && [5,6].includes(i))  f = 0.55;  // Jun, Jul: low activity
+      if (k === 'clean' && i === 2)             f = 1.30;  // March: spring clean
+
       return +(v * f).toFixed(2);
     });
   }
@@ -852,6 +875,44 @@ function recalc() {
     setEl('kpi-' + k,   fmt(periodoUI));
     setEl('kpi-' + k + '-a', fmt(anualStrat) + ' ' + un);
 
+    // Update slider value (thumb position) and badge to reflect strategy reduction
+    const valEl  = document.getElementById('val-' + k);
+    const slideEl = document.getElementById('slide-' + k);
+    if (mod < 1) {
+      const reducedMonthly = +(b.val * mod).toFixed(1);
+      const redPct = Math.round((1 - mod) * 100);
+      // Move the slider thumb to the reduced position
+      if (slideEl) slideEl.value = reducedMonthly;
+      if (valEl) {
+        valEl.textContent = reducedMonthly;
+        valEl.style.color = 'var(--mint)';
+      }
+      // Add/update the reduction badge next to the number
+      const badgeContainer = valEl ? valEl.parentElement : null;
+      if (badgeContainer) {
+        let badge = badgeContainer.querySelector('.strat-badge');
+        if (!badge) {
+          badge = document.createElement('span');
+          badge.className = 'strat-badge';
+          badge.style.cssText = 'font-size:.7rem;color:var(--mint);margin-left:4px;font-weight:700;';
+          badgeContainer.appendChild(badge);
+        }
+        badge.textContent = '−' + redPct + '%';
+      }
+    } else {
+      // Restore slider thumb to base value
+      if (slideEl) slideEl.value = b.val;
+      if (valEl) {
+        valEl.textContent = b.val;
+        valEl.style.color = '';
+      }
+      const badgeContainer = valEl ? valEl.parentElement : null;
+      if (badgeContainer) {
+        const badge = badgeContainer.querySelector('.strat-badge');
+        if (badge) badge.remove();
+      }
+    }
+
     // Update plan table base values
     setEl('pi-' + k, fmt(anualBase) + ' ' + un);
 
@@ -925,6 +986,7 @@ function recalc() {
   }
 
   drawCharts(labels, baseArr, stratArr);
+  drawPlanCharts(totalCO2anual, totalCO2strat);
 }
 
 /* ── DOM HELPER ──────────────────────────────────────────────── */
@@ -934,7 +996,7 @@ function setEl(id, val) {
 }
 
 /* ── CHART SETUP ─────────────────────────────────────────────── */
-let RC = null, DC = null, SC1 = null, SC2 = null;
+let RC = null, DC = null, SC1 = null, SC2 = null, PC1 = null, PC2 = null;
 
 const PAL = ['#4f8ef7','#f5a623','#1ed8a0','#a78bfa','#f472b6'];
 
@@ -1065,9 +1127,144 @@ function drawSeasonal() {
   }
 }
 
+function drawPlanCharts(totalBase, totalStrat) {
+  const c = chartColors();
+  const safeBase = totalBase > 0 ? totalBase : 1;
+
+  // CO2e projections per year (base → with strategies progressively applied)
+  const y2024 = safeBase;
+  const y2025 = safeBase * 0.90;  // −10%
+  const y2026 = safeBase * 0.80;  // −20%
+  const y2027 = safeBase * 0.70;  // −30%
+  const yCurrent = Math.min(totalStrat, safeBase); // with active strategies
+
+  const barLabels = ['2024 (Base)', '2025 (Any 1)', '2026 (Any 2)', '2027 (Any 3)', 'Estratègies Actives'];
+  const barData   = [y2024, y2025, y2026, y2027, yCurrent];
+  const barColors = [
+    'rgba(127,150,180,.55)',
+    'rgba(30,216,160,.55)',
+    'rgba(79,142,247,.55)',
+    'rgba(245,166,35,.55)',
+    'rgba(167,139,250,.75)'
+  ];
+  const barBorders = ['#7f96b4','#1ed8a0','#4f8ef7','#f5a623','#a78bfa'];
+
+  const commonOpts = {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { labels: { usePointStyle: true, padding: 14, font: { size: 11 }, color: c.txt } } },
+    scales: {
+      y: { grid: { color: c.grid }, ticks: { font: { size: 11 }, color: c.txt } },
+      x: { grid: { color: c.grid }, ticks: { font: { size: 11 }, color: c.txt } }
+    }
+  };
+
+  // Chart 1: CO2e evolution bar chart
+  const ctx1 = document.getElementById('planBarChart');
+  if (ctx1) {
+    if (PC1) {
+      PC1.data.datasets[0].data = barData;
+      PC1.update('active');
+    } else {
+      PC1 = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+          labels: barLabels,
+          datasets: [{
+            label: 'CO2e (kg/any)',
+            data: barData,
+            backgroundColor: barColors,
+            borderColor: barBorders,
+            borderWidth: 2,
+            borderRadius: 8,
+            borderSkipped: false
+          }]
+        },
+        options: {
+          ...commonOpts,
+          plugins: {
+            ...commonOpts.plugins,
+            tooltip: {
+              callbacks: {
+                label: ctx => `${fmt(ctx.raw, 1)} kg CO2e`,
+                afterLabel: ctx => {
+                  if (ctx.dataIndex === 0) return 'Línia base de referència';
+                  const red = (((safeBase - ctx.raw) / safeBase) * 100).toFixed(1);
+                  return `Reducció: −${red}% vs 2024`;
+                }
+              }
+            }
+          },
+          scales: {
+            ...commonOpts.scales,
+            y: { ...commonOpts.scales.y, title: { display: true, text: 'kg CO2e', color: c.txt, font: { size: 11 } } }
+          }
+        }
+      });
+    }
+  }
+
+  // Chart 2: Resource reduction stacked/grouped by indicator
+  const seas = seasonal(S.base);
+  const resourceLabels = ['Electricitat','Gas','Aigua','Paper','Neteja'];
+  const reductionPcts  = [
+    [0, 15, 22, 30],  // Elec: 0, −15, −22, −30
+    [0,  5, 18, 25],  // Gas
+    [0,  5, 15, 20],  // Water
+    [0, 30, 60, 90],  // Paper
+    [0, 25, 35, 40]   // Clean
+  ];
+  const years = ['2024', '2025', '2026', '2027'];
+  const palLine = ['#7f96b4','#1ed8a0','#4f8ef7','#f5a623'];
+  const palFill = ['rgba(127,150,180,.08)','rgba(30,216,160,.08)','rgba(79,142,247,.08)','rgba(245,166,35,.08)'];
+
+  // Build datasets: one per year, data = % of base remaining
+  const datasets2 = years.map((yr, yi) => ({
+    label: yr,
+    data: reductionPcts.map(r => 100 - r[yi]),
+    borderColor: palLine[yi],
+    backgroundColor: palFill[yi],
+    fill: false,
+    tension: .35,
+    borderWidth: yi === 0 ? 1.5 : 2,
+    borderDash: yi === 0 ? [5,4] : [],
+    pointBackgroundColor: palLine[yi],
+    pointRadius: 4, pointHoverRadius: 6
+  }));
+
+  const ctx2 = document.getElementById('planResourceChart');
+  if (ctx2) {
+    if (PC2) {
+      PC2.data.datasets.forEach((ds, i) => { ds.data = datasets2[i].data; });
+      PC2.update('active');
+    } else {
+      PC2 = new Chart(ctx2, {
+        type: 'line',
+        data: { labels: resourceLabels, datasets: datasets2 },
+        options: {
+          ...commonOpts,
+          plugins: {
+            ...commonOpts.plugins,
+            tooltip: {
+              callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw}% del consum base` }
+            }
+          },
+          scales: {
+            ...commonOpts.scales,
+            y: {
+              ...commonOpts.scales.y,
+              min: 0, max: 110,
+              title: { display: true, text: '% consum vs base 2024', color: c.txt, font: { size: 11 } }
+            }
+          }
+        }
+      });
+    }
+  }
+}
+
 function destroyCharts() {
-  [RC, DC, SC1, SC2].forEach(ch => { try { if (ch) ch.destroy(); } catch(e){} });
-  RC = DC = SC1 = SC2 = null;
+  [RC, DC, SC1, SC2, PC1, PC2].forEach(ch => { try { if (ch) ch.destroy(); } catch(e){} });
+  RC = DC = SC1 = SC2 = PC1 = PC2 = null;
 }
 
 /* ── DOWNLOAD JSON ───────────────────────────────────────────── */
