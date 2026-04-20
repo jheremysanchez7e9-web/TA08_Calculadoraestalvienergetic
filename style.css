@@ -688,6 +688,7 @@ body.light .prog-track { background: rgba(0,0,0,.08); }
 
 /* ── PLAN SUMMARY GRID ───────────────────────────────────────── */
 .plan-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; }
+.plan-charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
 .ps-card {
   border-radius: var(--r-md); padding: 1.25rem;
   border: 1px solid transparent; text-align: center;
