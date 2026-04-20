@@ -167,7 +167,7 @@
             <table aria-label="Taula de càlculs d'impacte ambiental">
               <thead>
                 <tr>
-                  <th scope="col">#</th>
+                  <th scope="col">Nº</th>
                   <th scope="col" data-i18n="th_ind">Indicador</th>
                   <th scope="col" data-i18n="th_calc1">Consum Anual (12m)</th>
                   <th scope="col" data-i18n="th_calc2">Consum Set–Jun (10m)</th>
@@ -276,7 +276,7 @@
       <div class="page" id="page-seasonal" role="region" aria-labelledby="seasonal-heading">
         <div class="sec-header">
           <h2 id="seasonal-heading">🌦️ <span data-i18n="var_title">Cicles Estacionals i Tendències</span></h2>
-          <p data-i18n="var_desc">Variabilitat mensual calculada a partir de 10_DATACLEANING.csv. Agost: centre tancat (5% del valor base).</p>
+          <p data-i18n="var_desc">Variabilitat mensual calculada a partir de 10_DATACLEANING.csv. Agost, Desembre i Abril: centre tancat per vacances (5% del valor base).</p>
         </div>
         <div class="card mb">
           <div class="card-head">
@@ -359,6 +359,17 @@
             <div class="ps-lbl" data-i18n="plan_strat_lbl">Amb Estratègies Actives</div>
             <div class="ps-val"><span id="plan-strat">0</span> kg</div>
             <div class="ps-sub" data-i18n="plan_strat_sub">Calculadora actualitzada</div>
+          </div>
+        </div>
+
+        <div class="card mb">
+          <div class="card-head">
+            <span class="card-title">📊 Resum Visual — Evolució CO2e i Recursos 2024–2027</span>
+            <span class="badge green">Projecció</span>
+          </div>
+          <div class="plan-charts-grid">
+            <div class="chart-box tall"><canvas id="planBarChart" aria-label="Gràfic evolució CO2e per any" role="img"></canvas></div>
+            <div class="chart-box tall"><canvas id="planResourceChart" aria-label="Gràfic evolució recursos per any" role="img"></canvas></div>
           </div>
         </div>
 
