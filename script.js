@@ -9,6 +9,12 @@
    ✅ Debounced recalc
    ═══════════════════════════════════════════════════════════════ */
 
+/* ── DYNAMIC YEARS (no hardcode) ─────────────────────────────── */
+const Y0 = new Date().getFullYear();      // base year  (e.g. 2025)
+const Y1 = Y0 + 1;                        // Any 1      (e.g. 2026)
+const Y2 = Y0 + 2;                        // Any 2      (e.g. 2027)
+const Y3 = Y0 + 3;                        // Any 3      (e.g. 2028)
+
 /* ── STATE ────────────────────────────────────────────────────── */
 const S = {
   lang:  'ca',
@@ -37,7 +43,7 @@ const T = {
     nav_data: 'Exportar JSON',
     btn_authors: 'Autors del Projecte',
     footer_text: 'ITB Sostenibilitat TIC - G11',
-    footer_project: 'Projecte TA08 · 2024',
+    footer_project: `Projecte TA08 · ${Y0}`,
     status_label: 'ITB · G11 · Actiu',
     header_title: 'Petjada Ambiental ITB',
     header_sub: 'Dades Reals · Fase 1 & 3 · G11 ASIX',
@@ -46,7 +52,7 @@ const T = {
     lbl_annual: 'Anual',
     lbl_language: 'Idioma',
     hero_title: 'Anàlisi de Petjada Ambiental',
-    hero_sub: 'Institut Tecnologia de Barcelona · G11 ASIX · Curs 2024',
+    hero_sub: `Institut Tecnologia de Barcelona · G11 ASIX · Curs ${Y0}`,
     hero_chip_active: '🌱 Projecte Actiu',
     hero_chip_phase: '📋 Fase 1 & 3',
     kpi_elec: 'Electricitat',
@@ -73,14 +79,14 @@ const T = {
     th_calc2: 'Consum Set–Jun (10m)',
     th_fact: 'Factor CO2e',
     th_emis: 'Emissions Anuals CO2e',
-    th_base2024: 'Base 2024',
+    th_base2024: `Base ${Y0}`,
     th_year1: 'Any 1 (−10%)',
     th_year2: 'Any 2 (−20%)',
     th_year3: 'Any 3 (−30%)',
     th_total_red: 'Reducció Total',
     calc_title: 'Calculadora & Simulació',
     calc_desc: "Ajusta els valors mensuals i activa estratègies per veure l'impacte en temps real.",
-    card_base_values: 'Valors Mensuals Base (2024)',
+    card_base_values: `Valors Mensuals Base (${Y0})`,
     card_base_sources: 'Fonts: 8_KPIs_RESUM.csv · 10_DATACLEANING.csv',
     reduce_title: '💡 Com reduir cada indicador',
     reduce_elec: "Sensors presència, LED, desconnexió equips fora d'horari.",
@@ -115,19 +121,19 @@ const T = {
     pct_plus30: '+30%', pct_plus40: '+40%', pct_plus50: '+50%', pct_plus120: '+120%',
     pct_minus50: '−50%', pct_minus60: '−60%', pct_minus90: '−90%',
     plan_title: 'Pla de Reducció del 30% en 3 Anys',
-    plan_desc: "Accions concretes, objectius mesurables, indicadors de seguiment i principis d'economia circular. Objectiu: −30% d'emissions CO2e el 2027.",
-    plan_now_lbl: 'Emissions Actuals (2024)',
+    plan_desc: `Accions concretes, objectius mesurables, indicadors de seguiment i principis d'economia circular. Objectiu: −30% d'emissions CO2e el ${Y3}.`,
+    plan_now_lbl: `Emissions Actuals (${Y0})`,
     plan_now_sub: 'CO2e anual base',
-    plan_target_lbl: 'Objectiu 2027 (−30%)',
+    plan_target_lbl: `Objectiu ${Y3} (−30%)`,
     plan_target_sub: 'CO2e a assolir',
     plan_saving_lbl: 'Estalvi Previst',
     plan_saving_sub: 'CO2e evitades/any',
     plan_strat_lbl: 'Amb Estratègies Actives',
     plan_strat_sub: 'Calculadora actualitzada',
     timeline_title: "📅 Cronograma d'Accions a 3 Anys",
-    year1_title: 'Any 1 · 2025', year1_goal: '−10% CO2e',
-    year2_title: 'Any 2 · 2026', year2_goal: '−20% acumulat',
-    year3_title: 'Any 3 · 2027', year3_goal: '−30% ✓ Objectiu',
+    year1_title: `Any 1 · ${Y1}`, year1_goal: '−10% CO2e',
+    year2_title: `Any 2 · ${Y2}`, year2_goal: '−20% acumulat',
+    year3_title: `Any 3 · ${Y3}`, year3_goal: '−30% ✓ Objectiu',
     tl1_1_title: 'LED + sensors presència', tl1_1_desc: 'Substitució il·luminació fluorescent. Sensors en passadissos i lavabos.', tl1_1_t1: '−15% Elec.',
     tl1_2_title: 'Política impressió responsable', tl1_2_desc: 'Impressió doble cara obligatòria. Migració a Google Workspace.', tl1_2_t1: '−30% Paper',
     tl1_3_title: 'Productes neteja concentrats', tl1_3_desc: "Envasos reutilitzables. Protocol d'ús eficient per equip neteja.", tl1_3_t1: '−25% Neteja',
@@ -154,7 +160,7 @@ const T = {
     btn_down: 'Descarregar JSON',
     btn_close: 'Tancar',
     modal_authors_title: '👥 Autors del Projecte',
-    modal_project_label: 'EcoAudit ASIR · Projecte TA08 · ITB · 2024',
+    modal_project_label: `EcoAudit ASIR · Projecte TA08 · ITB · ${Y0}`,
     author_role: 'ASIX · Grup G11',
     modal_badge: 'Sostenibilitat TIC',
     modal_badge2: 'Mòdul 0375',
@@ -172,7 +178,7 @@ const T = {
     nav_data: 'Exportar JSON',
     btn_authors: 'Autores del Proyecto',
     footer_text: 'ITB Sostenibilidad TIC - G11',
-    footer_project: 'Proyecto TA08 · 2024',
+    footer_project: `Proyecto TA08 · ${Y0}`,
     status_label: 'ITB · G11 · Activo',
     header_title: 'Huella Ambiental ITB',
     header_sub: 'Datos Reales · Fase 1 & 3 · G11 ASIX',
@@ -181,7 +187,7 @@ const T = {
     lbl_annual: 'Anual',
     lbl_language: 'Idioma',
     hero_title: 'Análisis de Huella Ambiental',
-    hero_sub: 'Institut Tecnologia de Barcelona · G11 ASIX · Curso 2024',
+    hero_sub: `Institut Tecnologia de Barcelona · G11 ASIX · Curso ${Y0}`,
     hero_chip_active: '🌱 Proyecto Activo',
     hero_chip_phase: '📋 Fase 1 & 3',
     kpi_elec: 'Electricidad',
@@ -208,14 +214,14 @@ const T = {
     th_calc2: 'Consumo Sep–Jun (10m)',
     th_fact: 'Factor CO2e',
     th_emis: 'Emisiones Anuales CO2e',
-    th_base2024: 'Base 2024',
+    th_base2024: `Base ${Y0}`,
     th_year1: 'Año 1 (−10%)',
     th_year2: 'Año 2 (−20%)',
     th_year3: 'Año 3 (−30%)',
     th_total_red: 'Reducción Total',
     calc_title: 'Calculadora & Simulación',
     calc_desc: 'Ajusta los valores mensuales y activa estrategias para ver el impacto en tiempo real.',
-    card_base_values: 'Valores Mensuales Base (2024)',
+    card_base_values: `Valores Mensuales Base (${Y0})`,
     card_base_sources: 'Fuentes: 8_KPIs_RESUM.csv · 10_DATACLEANING.csv',
     reduce_title: '💡 Cómo reducir cada indicador',
     reduce_elec: 'Sensores de presencia, LED, desconexión equipos fuera de horario.',
@@ -250,19 +256,19 @@ const T = {
     pct_plus30: '+30%', pct_plus40: '+40%', pct_plus50: '+50%', pct_plus120: '+120%',
     pct_minus50: '−50%', pct_minus60: '−60%', pct_minus90: '−90%',
     plan_title: 'Plan de Reducción del 30% en 3 Años',
-    plan_desc: 'Acciones concretas, objetivos medibles, indicadores de seguimiento y principios de economía circular. Objetivo: −30% de emisiones CO2e en 2027.',
-    plan_now_lbl: 'Emisiones Actuales (2024)',
+    plan_desc: `Acciones concretas, objetivos medibles, indicadores de seguimiento y principios de economía circular. Objetivo: −30% de emisiones CO2e en ${Y3}.`,
+    plan_now_lbl: `Emisiones Actuales (${Y0})`,
     plan_now_sub: 'CO2e anual base',
-    plan_target_lbl: 'Objetivo 2027 (−30%)',
+    plan_target_lbl: `Objetivo ${Y3} (−30%)`,
     plan_target_sub: 'CO2e a alcanzar',
     plan_saving_lbl: 'Ahorro Previsto',
     plan_saving_sub: 'CO2e evitadas/año',
     plan_strat_lbl: 'Con Estrategias Activas',
     plan_strat_sub: 'Calculadora actualizada',
     timeline_title: '📅 Cronograma de Acciones a 3 Años',
-    year1_title: 'Año 1 · 2025', year1_goal: '−10% CO2e',
-    year2_title: 'Año 2 · 2026', year2_goal: '−20% acumulado',
-    year3_title: 'Año 3 · 2027', year3_goal: '−30% ✓ Objetivo',
+    year1_title: `Año 1 · ${Y1}`, year1_goal: '−10% CO2e',
+    year2_title: `Año 2 · ${Y2}`, year2_goal: '−20% acumulado',
+    year3_title: `Año 3 · ${Y3}`, year3_goal: '−30% ✓ Objetivo',
     tl1_1_title: 'LED + sensores de presencia', tl1_1_desc: 'Sustitución iluminación fluorescente. Sensores en pasillos y baños.', tl1_1_t1: '−15% Elec.',
     tl1_2_title: 'Política de impresión responsable', tl1_2_desc: 'Impresión doble cara obligatoria. Migración a Google Workspace.', tl1_2_t1: '−30% Papel',
     tl1_3_title: 'Productos limpieza concentrados', tl1_3_desc: 'Envases reutilizables. Protocolo de uso eficiente para el equipo de limpieza.', tl1_3_t1: '−25% Limpieza',
@@ -289,7 +295,7 @@ const T = {
     btn_down: 'Descargar JSON',
     btn_close: 'Cerrar',
     modal_authors_title: '👥 Autores del Proyecto',
-    modal_project_label: 'EcoAudit ASIR · Proyecto TA08 · ITB · 2024',
+    modal_project_label: `EcoAudit ASIR · Proyecto TA08 · ITB · ${Y0}`,
     author_role: 'ASIX · Grupo G11',
     modal_badge: 'Sostenibilidad TIC',
     modal_badge2: 'Módulo 0375',
@@ -307,7 +313,7 @@ const T = {
     nav_data: 'Export JSON',
     btn_authors: 'Project Authors',
     footer_text: 'ITB ICT Sustainability - G11',
-    footer_project: 'Project TA08 · 2024',
+    footer_project: `Project TA08 · ${Y0}`,
     status_label: 'ITB · G11 · Active',
     header_title: 'ITB Environmental Footprint',
     header_sub: 'Real Data · Phase 1 & 3 · G11 ASIX',
@@ -316,7 +322,7 @@ const T = {
     lbl_annual: 'Annual',
     lbl_language: 'Language',
     hero_title: 'Environmental Footprint Analysis',
-    hero_sub: 'Institut Tecnologia de Barcelona · G11 ASIX · 2024',
+    hero_sub: `Institut Tecnologia de Barcelona · G11 ASIX · ${Y0}`,
     hero_chip_active: '🌱 Active Project',
     hero_chip_phase: '📋 Phase 1 & 3',
     kpi_elec: 'Electricity',
@@ -343,14 +349,14 @@ const T = {
     th_calc2: 'Sep–Jun Period (10m)',
     th_fact: 'CO2e Factor',
     th_emis: 'Annual CO2e Emissions',
-    th_base2024: 'Base 2024',
+    th_base2024: `Base ${Y0}`,
     th_year1: 'Year 1 (−10%)',
     th_year2: 'Year 2 (−20%)',
     th_year3: 'Year 3 (−30%)',
     th_total_red: 'Total Reduction',
     calc_title: 'Calculator & Simulation',
     calc_desc: 'Adjust monthly values and activate strategies to see real-time impact on all indicators.',
-    card_base_values: 'Monthly Base Values (2024)',
+    card_base_values: `Monthly Base Values (${Y0})`,
     card_base_sources: 'Sources: 8_KPIs_RESUM.csv · 10_DATACLEANING.csv',
     reduce_title: '💡 How to reduce each indicator',
     reduce_elec: 'Presence sensors, LED lighting, equipment shutdown outside hours.',
@@ -385,19 +391,19 @@ const T = {
     pct_plus30: '+30%', pct_plus40: '+40%', pct_plus50: '+50%', pct_plus120: '+120%',
     pct_minus50: '−50%', pct_minus60: '−60%', pct_minus90: '−90%',
     plan_title: '30% Reduction Plan in 3 Years',
-    plan_desc: 'Concrete actions, measurable objectives, tracking indicators and circular economy principles. Target: −30% CO2e emissions by 2027.',
-    plan_now_lbl: 'Current Emissions (2024)',
+    plan_desc: `Concrete actions, measurable objectives, tracking indicators and circular economy principles. Target: −30% CO2e emissions by ${Y3}.`,
+    plan_now_lbl: `Current Emissions (${Y0})`,
     plan_now_sub: 'Annual CO2e base',
-    plan_target_lbl: '2027 Target (−30%)',
+    plan_target_lbl: `${Y3} Target (−30%)`,
     plan_target_sub: 'CO2e to achieve',
     plan_saving_lbl: 'Projected Savings',
     plan_saving_sub: 'CO2e avoided/year',
     plan_strat_lbl: 'With Active Strategies',
     plan_strat_sub: 'Updated calculator',
     timeline_title: '📅 3-Year Action Roadmap',
-    year1_title: 'Year 1 · 2025', year1_goal: '−10% CO2e',
-    year2_title: 'Year 2 · 2026', year2_goal: '−20% cumulative',
-    year3_title: 'Year 3 · 2027', year3_goal: '−30% ✓ Target',
+    year1_title: `Year 1 · ${Y1}`, year1_goal: '−10% CO2e',
+    year2_title: `Year 2 · ${Y2}`, year2_goal: '−20% cumulative',
+    year3_title: `Year 3 · ${Y3}`, year3_goal: '−30% ✓ Target',
     tl1_1_title: 'LED + presence sensors', tl1_1_desc: 'Fluorescent lighting replacement. Sensors in corridors and bathrooms.', tl1_1_t1: '−15% Elec.',
     tl1_2_title: 'Responsible printing policy', tl1_2_desc: 'Mandatory double-sided printing. Migration to Google Workspace.', tl1_2_t1: '−30% Paper',
     tl1_3_title: 'Concentrated cleaning products', tl1_3_desc: 'Reusable containers. Efficient use protocol for cleaning staff.', tl1_3_t1: '−25% Cleaning',
@@ -424,7 +430,7 @@ const T = {
     btn_down: 'Download JSON',
     btn_close: 'Close',
     modal_authors_title: '👥 Project Authors',
-    modal_project_label: 'EcoAudit ASIR · Project TA08 · ITB · 2024',
+    modal_project_label: `EcoAudit ASIR · Project TA08 · ITB · ${Y0}`,
     author_role: 'ASIX · Group G11',
     modal_badge: 'ICT Sustainability',
     modal_badge2: 'Module 0375',
@@ -442,7 +448,7 @@ const T = {
     nav_data: 'JSON Exportieren',
     btn_authors: 'Projektautoren',
     footer_text: 'ITB IKT-Nachhaltigkeit - G11',
-    footer_project: 'Projekt TA08 · 2024',
+    footer_project: `Projekt TA08 · ${Y0}`,
     status_label: 'ITB · G11 · Aktiv',
     header_title: 'ITB Ökologischer Fußabdruck',
     header_sub: 'Echte Daten · Phase 1 & 3 · G11 ASIX',
@@ -451,7 +457,7 @@ const T = {
     lbl_annual: 'Jährlich',
     lbl_language: 'Sprache',
     hero_title: 'Analyse des Ökologischen Fußabdrucks',
-    hero_sub: 'Institut Tecnologia de Barcelona · G11 ASIX · Kurs 2024',
+    hero_sub: `Institut Tecnologia de Barcelona · G11 ASIX · Kurs ${Y0}`,
     hero_chip_active: '🌱 Aktives Projekt',
     hero_chip_phase: '📋 Phase 1 & 3',
     kpi_elec: 'Elektrizität',
@@ -478,14 +484,14 @@ const T = {
     th_calc2: 'Sep–Jun Zeitraum (10M)',
     th_fact: 'CO2e-Faktor',
     th_emis: 'Jährliche CO2e-Emissionen',
-    th_base2024: 'Basis 2024',
+    th_base2024: `Basis ${Y0}`,
     th_year1: 'Jahr 1 (−10%)',
     th_year2: 'Jahr 2 (−20%)',
     th_year3: 'Jahr 3 (−30%)',
     th_total_red: 'Gesamtreduktion',
     calc_title: 'Rechner & Simulation',
     calc_desc: 'Monatliche Werte anpassen und Strategien aktivieren für Echtzeit-Auswirkungen.',
-    card_base_values: 'Monatliche Basiswerte (2024)',
+    card_base_values: `Monatliche Basiswerte (${Y0})`,
     card_base_sources: 'Quellen: 8_KPIs_RESUM.csv · 10_DATACLEANING.csv',
     reduce_title: '💡 Wie man jeden Indikator reduziert',
     reduce_elec: 'Präsenzsensoren, LED-Beleuchtung, Geräteabschaltung außerhalb der Betriebszeiten.',
@@ -520,19 +526,19 @@ const T = {
     pct_plus30: '+30%', pct_plus40: '+40%', pct_plus50: '+50%', pct_plus120: '+120%',
     pct_minus50: '−50%', pct_minus60: '−60%', pct_minus90: '−90%',
     plan_title: '30%-Reduktionsplan in 3 Jahren',
-    plan_desc: 'Konkrete Maßnahmen, messbare Ziele, Tracking-Indikatoren und Kreislaufwirtschaftsprinzipien. Ziel: −30% CO2e-Emissionen bis 2027.',
-    plan_now_lbl: 'Aktuelle Emissionen (2024)',
+    plan_desc: `Konkrete Maßnahmen, messbare Ziele, Tracking-Indikatoren und Kreislaufwirtschaftsprinzipien. Ziel: −30% CO2e-Emissionen bis ${Y3}.`,
+    plan_now_lbl: `Aktuelle Emissionen (${Y0})`,
     plan_now_sub: 'Jährliche CO2e Basis',
-    plan_target_lbl: 'Ziel 2027 (−30%)',
+    plan_target_lbl: `Ziel ${Y3} (−30%)`,
     plan_target_sub: 'Zu erreichende CO2e',
     plan_saving_lbl: 'Voraussichtliche Einsparung',
     plan_saving_sub: 'CO2e vermieden/Jahr',
     plan_strat_lbl: 'Mit Aktiven Strategien',
     plan_strat_sub: 'Rechner aktualisiert',
     timeline_title: '📅 3-Jahres-Aktionsfahrplan',
-    year1_title: 'Jahr 1 · 2025', year1_goal: '−10% CO2e',
-    year2_title: 'Jahr 2 · 2026', year2_goal: '−20% kumuliert',
-    year3_title: 'Jahr 3 · 2027', year3_goal: '−30% ✓ Ziel',
+    year1_title: `Jahr 1 · ${Y1}`, year1_goal: '−10% CO2e',
+    year2_title: `Jahr 2 · ${Y2}`, year2_goal: '−20% kumuliert',
+    year3_title: `Jahr 3 · ${Y3}`, year3_goal: '−30% ✓ Ziel',
     tl1_1_title: 'LED + Präsenzsensoren', tl1_1_desc: 'Ersatz der Leuchtstoffbeleuchtung. Sensoren in Fluren und Bädern.', tl1_1_t1: '−15% Strom',
     tl1_2_title: 'Verantwortungsvolle Druckrichtlinie', tl1_2_desc: 'Pflichtmäßiger Doppelseitendruck. Migration zu Google Workspace.', tl1_2_t1: '−30% Papier',
     tl1_3_title: 'Konzentrierte Reinigungsprodukte', tl1_3_desc: 'Mehrwegbehälter. Effizienzprotokoll für Reinigungsteam.', tl1_3_t1: '−25% Reinigung',
@@ -559,7 +565,7 @@ const T = {
     btn_down: 'JSON Herunterladen',
     btn_close: 'Schließen',
     modal_authors_title: '👥 Projektautoren',
-    modal_project_label: 'EcoAudit ASIR · Projekt TA08 · ITB · 2024',
+    modal_project_label: `EcoAudit ASIR · Projekt TA08 · ITB · ${Y0}`,
     author_role: 'ASIX · Gruppe G11',
     modal_badge: 'IKT-Nachhaltigkeit',
     modal_badge2: 'Modul 0375',
@@ -979,7 +985,7 @@ function recalc() {
 
     // Export data
     S.export.Fase1_DataClean_Original[nm] = {
-      Valor_Mensual_2024: b.val,
+      Valor_Mensual_Base: b.val,
       Unitat: un,
       Factor_CO2e: b.co2,
       CO2e_Anual_Base_kg: +co2Base.toFixed(2)
@@ -1176,14 +1182,14 @@ function drawPlanCharts(totalBase, totalStrat) {
   const safeBase = totalBase > 0 ? totalBase : 1;
 
   // CO2e projections per year (base → with strategies progressively applied)
-  const y2024 = safeBase;
-  const y2025 = safeBase * 0.90;  // −10%
-  const y2026 = safeBase * 0.80;  // −20%
-  const y2027 = safeBase * 0.70;  // −30%
+  const yBase    = safeBase;
+  const yYear1   = safeBase * 0.90;  // −10%
+  const yYear2   = safeBase * 0.80;  // −20%
+  const yYear3   = safeBase * 0.70;  // −30%
   const yCurrent = Math.min(totalStrat, safeBase); // with active strategies
 
-  const barLabels = ['2024 (Base)', '2025 (Any 1)', '2026 (Any 2)', '2027 (Any 3)', 'Estratègies Actives'];
-  const barData   = [y2024, y2025, y2026, y2027, yCurrent];
+  const barLabels = [`${Y0} (Base)`, `${Y1} (Any 1)`, `${Y2} (Any 2)`, `${Y3} (Any 3)`, 'Estratègies Actives'];
+  const barData   = [yBase, yYear1, yYear2, yYear3, yCurrent];
   const barColors = [
     'rgba(127,150,180,.55)',
     'rgba(30,216,160,.55)',
@@ -1233,7 +1239,7 @@ function drawPlanCharts(totalBase, totalStrat) {
                 afterLabel: ctx => {
                   if (ctx.dataIndex === 0) return 'Línia base de referència';
                   const red = (((safeBase - ctx.raw) / safeBase) * 100).toFixed(1);
-                  return `Reducció: −${red}% vs 2024`;
+                  return `Reducció: −${red}% vs ${Y0}`;
                 }
               }
             }
@@ -1257,7 +1263,7 @@ function drawPlanCharts(totalBase, totalStrat) {
     [0, 30, 60, 90],  // Paper
     [0, 25, 35, 40]   // Clean
   ];
-  const years = ['2024', '2025', '2026', '2027'];
+  const years = [`${Y0}`, `${Y1}`, `${Y2}`, `${Y3}`];
   const palLine = ['#7f96b4','#1ed8a0','#4f8ef7','#f5a623'];
   const palFill = ['rgba(127,150,180,.08)','rgba(30,216,160,.08)','rgba(79,142,247,.08)','rgba(245,166,35,.08)'];
 
@@ -1297,7 +1303,7 @@ function drawPlanCharts(totalBase, totalStrat) {
             y: {
               ...commonOpts.scales.y,
               min: 0, max: 110,
-              title: { display: true, text: '% consum vs base 2024', color: c.txt, font: { size: 11 } }
+              title: { display: true, text: `% consum vs base ${Y0}`, color: c.txt, font: { size: 11 } }
             }
           }
         }
@@ -1355,6 +1361,9 @@ window.addEventListener('DOMContentLoaded', () => {
   const sel = document.getElementById('lang-sel');
   if (sel) sel.value = lang;
   applyTranslations(lang);
+
+  // Set dynamic years in non-i18n elements
+  setEl('plan-chart-title', `📊 Resum Visual — Evolució CO2e i Recursos ${Y0}–${Y3}`);
 
   // Initial calculation
   recalc();
