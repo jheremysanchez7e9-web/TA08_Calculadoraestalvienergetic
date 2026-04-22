@@ -697,49 +697,99 @@ function seasonal(base) {
   const d = {};
   const keys = Object.keys(base);
 
-  // School calendar: Aug=closed, Dec=Christmas holidays (0), Apr=Easter holidays (0)
-  // Jan back to school (high usage), Mar pre-Easter prep (slightly elevated)
+  /*
+   * Institut ASIX/ASIR — calendar reality:
+   *  - Aug  (7):  Centre totalment tancat. Standby mínim.
+   *  - Dec  (11): Vacances Nadal (~23 des – 7 gen). Centre tancat.
+   *  - Apr  (3):  Vacances Setmana Santa (~1 setmana). Centre tancat.
+   *  - Jul  (6):  Només personal administratiu i alguns professors.
+   *               Alumnes ja han acabat (~juny). Molt baixa activitat.
+   *  - Jun  (5):  Últimes setmanes d'alumnes, exàmens finals, entrega projectes.
+   *  - Sep  (8):  Inici de curs: matrícula, preparació aules, neteja general.
+   *  - Oct  (9):  Primers mesos de curs, ple funcionament.
+   *  - Nov  (10): Ple curs, fred que arriba → gas puja.
+   *  - Jan  (0):  Tornada de Nadal, hivern fred → gas i llum alts.
+   *  - Feb  (1):  Hivern, ple curs.
+   *  - Mar  (2):  Pre-Setmana Santa: exàmens parcials, projectes, paper alt.
+   *  - May  (4):  Post-Easter: alumnes torna, exàmens finals s'acosten.
+   */
 
   for (const k of keys) {
     const v = safeNum(base[k].val, 0);
     d[k] = MONTH_LABELS_CA.map((_, i) => {
-      // Closed months: August (7), December Christmas (11), April Easter (3)
-      if (i === 7  ) return +(v * 0.05).toFixed(2); // August: centre closed (minimal standby)
-      if (i === 11 ) return +(v * 0.05).toFixed(2); // December: Christmas holidays closed
-      if (i === 3  ) return +(v * 0.05).toFixed(2); // April: Easter holidays closed
+      // === TANCAT / QUASI TANCAT ===
+      if (i === 7)  return +(v * 0.04).toFixed(2); // Agost: tancat total, standby servidors
+      if (i === 11) return +(v * 0.04).toFixed(2); // Desembre: Nadal tancat
+      if (i === 3)  return +(v * 0.04).toFixed(2); // Abril: Setmana Santa tancat
 
       let f = 1.0;
 
-      // === GAS ===
-      if (k === 'gas' && [10,0,1].includes(i)) f = 2.20;  // Oct, Jan, Feb: winter heating peak
-      if (k === 'gas' && i === 2)               f = 1.60;  // March: still cold
-      if (k === 'gas' && [4].includes(i))       f = 0.50;  // May: warming up
-      if (k === 'gas' && [5,6].includes(i))     f = 0.10;  // Jun, Jul: no heating
-      if (k === 'gas' && [8,9].includes(i))     f = 0.80;  // Sep, Oct start
+      // ── GAS (calefacció): fort pic hivernal, zero estiu ──────────
+      if (k === 'gas') {
+        // Hivern profund
+        if (i === 0)  f = 2.30; // Gener: tornada Nadal, màxim fred
+        if (i === 1)  f = 2.10; // Febrer: hivern ple
+        if (i === 10) f = 1.80; // Novembre: fred arriba
+        if (i === 9)  f = 0.70; // Octubre: fred inicial, calefacció arrenca poc
+        if (i === 2)  f = 1.50; // Març: fred però baixant
+        if (i === 8)  f = 0.40; // Setembre: tardor suau, quasi res
+        if (i === 4)  f = 0.30; // Maig: primavera, quasi res
+        if (i === 5)  f = 0.05; // Juny: gens de calefacció
+        if (i === 6)  f = 0.03; // Juliol: zero pràcticament (sols admin)
+      }
 
-      // === ELECTRICITY ===
-      if (k === 'elec' && [0,1].includes(i))    f = 1.15;  // Jan, Feb: winter lighting
-      if (k === 'elec' && [5,6].includes(i))    f = 0.90;  // Jun, Jul: less activity
-      if (k === 'elec' && i === 2)              f = 1.18;  // March: pre-Easter activity
+      // ── ELECTRICITAT: servidors + aules + il·luminació ───────────
+      if (k === 'elec') {
+        // Hivern: menys llum natural, calefacció elèctrica auxiliar
+        if (i === 0)  f = 1.20; // Gener: hivern, dies curts
+        if (i === 1)  f = 1.18; // Febrer: hivern, dies curts
+        if (i === 10) f = 1.12; // Novembre: dies s'escurcen
+        if (i === 9)  f = 1.05; // Octubre: inici curs ple, dies normals
+        if (i === 2)  f = 1.10; // Març: ple curs
+        if (i === 8)  f = 1.08; // Setembre: inici curs, preparació aules
+        if (i === 4)  f = 1.02; // Maig: dies llargs, menys llum artificial
+        if (i === 5)  f = 0.85; // Juny: exàmens finals, menys aules obertes
+        if (i === 6)  f = 0.30; // Juliol: sols secretaria + 2-3 professors, servidors standby
+      }
 
-      // === WATER ===
-      if (k === 'water' && [4,5,6].includes(i)) f = 1.30;  // May–Jul: warm months
-      if (k === 'water' && [8].includes(i))     f = 1.10;  // Sep: back to school cleaning
-      if (k === 'water' && [0,1].includes(i))   f = 0.85;  // Jan, Feb: winter low
-      if (k === 'water' && i === 2)             f = 1.20;  // March: spring cleaning
+      // ── AIGUA: wc alumnes, neteja, fonts ─────────────────────────
+      if (k === 'water') {
+        if (i === 8)  f = 1.25; // Setembre: neteja fons, inici curs
+        if (i === 9)  f = 1.10; // Octubre: ple curs
+        if (i === 0)  f = 0.95; // Gener: menys alumnes primers dies
+        if (i === 1)  f = 1.00; // Febrer: normal
+        if (i === 10) f = 1.05; // Novembre: normal
+        if (i === 2)  f = 1.15; // Març: neteja pre-vacances Easter
+        if (i === 4)  f = 1.10; // Maig: calor creixent, més consum
+        if (i === 5)  f = 1.20; // Juny: calor, exàmens, més ús wc
+        if (i === 6)  f = 0.25; // Juliol: sols 5-6 persones al centre
+      }
 
-      // === PAPER ===
-      if (k === 'paper' && i === 8)             f = 1.50;  // Sep: back to school
-      if (k === 'paper' && [4].includes(i))     f = 1.25;  // May: post-Easter exams
-      if (k === 'paper' && [5,6].includes(i))   f = 0.50;  // Jun, Jul: wind-down
-      if (k === 'paper' && i === 2)             f = 1.45;  // March: pre-Easter exams/projects
-      if (k === 'paper' && i === 0)             f = 1.30;  // January: new-year admin burst
+      // ── PAPER: impressions, exàmens, projectes ASIX ──────────────
+      if (k === 'paper') {
+        if (i === 8)  f = 1.60; // Setembre: matrícules, horaris, guies didàctiques
+        if (i === 0)  f = 1.35; // Gener: nous temaris, exàmens 1r trimestre
+        if (i === 2)  f = 1.50; // Març: exàmens parcials, projectes FCT, pràctiques
+        if (i === 4)  f = 1.40; // Maig: exàmens finals, projectes final de curs
+        if (i === 9)  f = 1.10; // Octubre: activitat normal alta
+        if (i === 10) f = 1.05; // Novembre: normal
+        if (i === 1)  f = 1.00; // Febrer: normal
+        if (i === 5)  f = 0.55; // Juny: ja quasi tot digital, pocs alumnes
+        if (i === 6)  f = 0.15; // Juliol: sols admin, quasi res
+      }
 
-      // === CLEANING PRODUCTS ===
-      if (k === 'clean' && i === 8)             f = 1.40;  // Sep: big clean after summer
-      if (k === 'clean' && [10,0,1].includes(i)) f = 1.10; // Oct, Jan, Feb: winter extra
-      if (k === 'clean' && [5,6].includes(i))  f = 0.55;  // Jun, Jul: low activity
-      if (k === 'clean' && i === 2)             f = 1.30;  // March: spring clean
+      // ── NETEJA: proporcional a persones al centre ─────────────────
+      if (k === 'clean') {
+        if (i === 8)  f = 1.50; // Setembre: neteja profunda inici curs
+        if (i === 2)  f = 1.25; // Març: neteja pre-vacances Setmana Santa
+        if (i === 9)  f = 1.10; // Octubre: ple curs
+        if (i === 10) f = 1.10; // Novembre: ple curs
+        if (i === 0)  f = 1.10; // Gener: neteja post-Nadal
+        if (i === 1)  f = 1.05; // Febrer: normal
+        if (i === 4)  f = 1.05; // Maig: normal
+        if (i === 5)  f = 0.70; // Juny: menys alumnes
+        if (i === 6)  f = 0.20; // Juliol: sols neteja mínima (sols admin)
+      }
 
       return +(v * f).toFixed(2);
     });
@@ -810,7 +860,6 @@ function recalc() {
   let totalCO2anual = 0;
   let totalCO2strat = 0;
   const labels = [], baseArr = [], stratArr = [];
-  let rowNum = 1;
 
   // Build export structure
   S.export = {
@@ -916,15 +965,10 @@ function recalc() {
     // Update plan table base values
     setEl('pi-' + k, fmt(anualBase) + ' ' + un);
 
-    // Table row (only required 4 get calc numbers)
-    const isRequired = ['elec','water','paper','clean'].includes(k);
-    const n1 = isRequired ? rowNum++ : '—';
-    const n2 = isRequired ? rowNum++ : '—';
-
+    // Table row
     if (tbody) {
       const tr = document.createElement('tr');
       tr.innerHTML =
-        `<td style="color:var(--t3);font-weight:700;font-size:.78rem">${n1}/${n2}</td>` +
         `<td><strong>${nm}</strong></td>` +
         `<td>${fmt(anualStrat)} <span class="dim">${un}</span></td>` +
         `<td>${fmt(periodeStrat)} <span class="dim">${un}</span></td>` +
