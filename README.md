@@ -1,4 +1,4 @@
-#🌿 EcoAudit ASIR — Sustainability Calculator
+🌿 EcoAudit ASIR — Sustainability Calculator
 Jheremy Sánchez & Ayoub Sfili | ITB Group G11
 
 A data-driven web engine designed to analyze and project energy consumption for the Institut Tecnològic de Barcelona. This tool transforms historical data into actionable sustainability roadmaps using professional-grade frontend logic.
