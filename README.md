@@ -25,6 +25,20 @@ Following a modern IT workflow, this project was architected using **Advanced LL
 
 ---
 
+⚙️ Quick Start
+Clone: git clone https://github.com/jheremysanchez7e9-web/TA08_Calculadoraestalvienergetic.git
+
+Run: Open index.html in any browser.
+
+📫 Contact
+Jheremy Sánchez: LinkedIn | jheremysebastian17@gmail.com
+
+Ayoub Sfili: LinkedIn
+
+Location: ITB, Barcelona, Spain.
+
+---
+
 ### 📂 Project Structure
 
 ```text
